@@ -20,6 +20,26 @@ export class ApiClient {
     }
 
     /**
+     * Normalize boolean strings in the payload
+     * Converts "true"/"false" strings to actual booleans
+     * @param {Object} data - The request body data
+     * @returns {Object} - The normalized data
+     */
+    normalizeBooleans(data) {
+        const result = {};
+        for (const [key, value] of Object.entries(data)) {
+            if (value === "true") {
+                result[key] = true;
+            } else if (value === "false") {
+                result[key] = false;
+            } else {
+                result[key] = value;
+            }
+        }
+        return result;
+    }
+
+    /**
      * Make an API request with standardized error handling
      * @param {string} method - The HTTP method (GET, POST, PUT, DELETE, etc.)
      * @param {string} endpoint - The API endpoint (will be appended to baseUrl)
@@ -31,7 +51,7 @@ export class ApiClient {
         const fetchOptions = { method };
         if (data) {
             fetchOptions.headers = { 'Content-Type': 'application/json' };
-            fetchOptions.body = JSON.stringify(data);
+            fetchOptions.body = JSON.stringify(this.normalizeBooleans(data));
         }
 
         const response = await fetch(url, fetchOptions);
