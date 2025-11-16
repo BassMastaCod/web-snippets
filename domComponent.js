@@ -98,3 +98,9 @@ export class DomComponent {
         return parseInt(this.element.id.slice(this.constructor.className.length));
     }
 }
+
+export function htmlToElement(html) {
+    const template = document.createElement('template');
+    template.innerHTML = html.trim();
+    return template.content.firstElementChild;
+}
