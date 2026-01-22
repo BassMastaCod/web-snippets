@@ -60,7 +60,7 @@ export class DomComponent {
      * Get the prefix of the path to allow for dynamic endpoint reference.
      */
     getPathPrefix() {
-        return document.querySelector('meta[name=path-prefix]').content);
+        return document.querySelector('meta[name=path-prefix]').content;
     }
 
     /**
