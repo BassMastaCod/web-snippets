@@ -46,9 +46,9 @@ export class ApiClient {
      * @param {Object} data - The request body data (for POST, PUT, etc.)
      * @returns {Promise<any>} - The response data
      */
-    async request(method, endpoint = '', data = null) {
+    async request(method, endpoint = '', data = null, extraOptions = {}) {
         const url = this.baseUrl + endpoint;
-        const fetchOptions = { method };
+        const fetchOptions = { method, ...extraOptions };
         if (data) {
             fetchOptions.headers = { 'Content-Type': 'application/json' };
             fetchOptions.body = JSON.stringify(this.normalizeBooleans(data));
@@ -112,7 +112,27 @@ export class ApiClient {
      * @param {string} endpoint - The API endpoint
      * @returns {Promise<any>} - The response data
      */
-    async delete(endpoint) {
+    async delete(endpoint = '') {
         return this.request('DELETE', endpoint);
+    }
+
+    /**
+     * Make a HEAD request
+     * @param {string} endpoint - The API endpoint
+     * @returns {Promise<any>} - The response data
+     */
+    async head(endpoint = '') {
+        return this.request('HEAD', endpoint);
+    }
+}
+
+/**
+ * An API client that automatically authenticates each request using an HTTP Only Cookie.
+ */
+export class SessionClient extends ApiClient {
+    async request(method, endpoint = '', data = null) {
+        return super.request(method, endpoint, data, {
+            credentials: 'include'
+        });
     }
 }
