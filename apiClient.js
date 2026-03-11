@@ -154,8 +154,9 @@ export class SessionClient extends ApiClient {
  * @returns {string} A fully resolved URL string based on the <base> tag.
  */
 export function withBase(path) {
-    const base = document.querySelector('base')?.href || '/';
-    return new URL(path, base).toString();
+    const base = document.querySelector('base')?.getAttribute('href') || '/';
+    const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+    return base + cleanPath;
 }
 
 export function fetchWithBase(path, options) {
