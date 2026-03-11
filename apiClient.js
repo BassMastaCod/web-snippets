@@ -136,3 +136,28 @@ export class SessionClient extends ApiClient {
         });
     }
 }
+
+/**
+ * Resolves a relative path against the document's <base> href.
+ *
+ * This allows applications to work correctly when deployed under
+ * a dynamic or nested base path (e.g., "/", "/app/v2/").
+ *
+ * The <base> tag must be defined under the <head> tag.
+ * This is automatically done for you if using FastPWA.
+ *
+ * Examples:
+ *   <base href="/dev/">
+ *   withBase("/api/sessions") → "/dev/api/sessions"
+ *
+ * @param {string} path - A relative or absolute path to resolve.
+ * @returns {string} A fully resolved URL string based on the <base> tag.
+ */
+export function withBase(path) {
+    const base = document.querySelector('base')?.href || '/';
+    return new URL(path, base).toString();
+}
+
+export function fetchWithBase(path, options) {
+    return fetch(withBase(path), options);
+}
