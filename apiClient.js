@@ -50,6 +50,12 @@ export class ApiClient {
         const url = this.baseUrl + endpoint;
         const fetchOptions = { method, ...extraOptions };
         if (data) {
+            if (data instanceof FormData) {
+                fetchOptions.body = data;
+            } else {
+                fetchOptions.headers = { 'Content-Type': 'application/json' };
+                fetchOptions.body = JSON.stringify(this.normalizeBooleans(data));
+            }
             fetchOptions.headers = { 'Content-Type': 'application/json' };
             fetchOptions.body = JSON.stringify(this.normalizeBooleans(data));
         }
