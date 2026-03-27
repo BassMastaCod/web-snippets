@@ -56,8 +56,6 @@ export class ApiClient {
                 fetchOptions.headers = { 'Content-Type': 'application/json' };
                 fetchOptions.body = JSON.stringify(this.normalizeBooleans(data));
             }
-            fetchOptions.headers = { 'Content-Type': 'application/json' };
-            fetchOptions.body = JSON.stringify(this.normalizeBooleans(data));
         }
 
         const response = await fetch(url, fetchOptions);
