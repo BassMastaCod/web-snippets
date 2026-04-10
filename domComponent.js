@@ -9,6 +9,9 @@ export class DomComponent {
     static create(...args) {
         const element = this.createElement(...args);
         const dom = new this(element);
+        if (!this.element.id) {
+            this.element.id = this.constructor.className + dom.generateId(...args);
+        }
         dom.init(...args);
         dom.registerEventListeners(...args);
         return dom;
@@ -96,6 +99,15 @@ export class DomComponent {
      */
     hasClass(className) {
         return this.element.classList.contains(className);
+    }
+
+    /**
+     * Generates a unique ID for the element.
+     *
+     * This will be a random UUID unless overridden with something more meaningful.
+     */
+    generateId(...args) {
+        return crypto.randomUUID();
     }
 
     /**
