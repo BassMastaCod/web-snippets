@@ -9,8 +9,8 @@ export class DomComponent {
     static create(...args) {
         const element = this.createElement(...args);
         const dom = new this(element);
-        if (!this.element.id) {
-            this.element.id = this.constructor.className + dom.generateId(...args);
+        if (!element.id) {
+            element.id = this.constructor.className + dom.generateId(...args);
         }
         dom.init(...args);
         dom.registerEventListeners(...args);
