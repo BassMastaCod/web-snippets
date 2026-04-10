@@ -117,7 +117,7 @@ export class DomComponent {
      * Get the ID associated with the element.
      */
     getId() {
-        return parseInt(this.element.id.slice(this.constructor.className.length));
+        return this.element.id.slice(this.constructor.className.length);
     }
 }
 
