@@ -8,10 +8,10 @@ export class DomComponent {
 
     static create(...args) {
         const element = this.createElement(...args);
-        const dom = new this(element);
         if (!element.classList.contains(this.className)) {
             element.classList.add(this.className)
         }
+        const dom = new this(element);
         if (!element.id) {
             element.id = this.className + dom.generateId(...args);
         }
