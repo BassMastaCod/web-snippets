@@ -52,6 +52,9 @@ export class ApiClient {
         if (data) {
             if (data instanceof FormData) {
                 fetchOptions.body = data;
+            } else if (typeof data === 'string') {
+                fetchOptions.headers = { 'Content-Type': 'text/plain' };
+                fetchOptions.body = data;
             } else {
                 fetchOptions.headers = { 'Content-Type': 'application/json' };
                 fetchOptions.body = JSON.stringify(this.normalizeBooleans(data));
