@@ -121,6 +121,65 @@ export class DomComponent {
     }
 }
 
+export class DraggableDomComponent extends DomComponent {
+    static create(...args) {
+        const dom = super.create(...args);
+        dom.element.draggable = true;
+        dom.registerDragEventListeners();
+        return dom;
+    }
+
+    registerDragEventListeners() {
+        this.element.addEventListener('dragstart', this.handleDragStart.bind(this));
+        this.element.addEventListener('dragover', this.handleDragOver.bind(this));
+        this.element.addEventListener('dragleave', this.handleDragLeave.bind(this));
+        this.element.addEventListener('drop', this.handleDrop.bind(this));
+        this.element.addEventListener('dragend', this.handleDragEnd.bind(this));
+    }
+
+    handleDragStart(e) {
+        this.setClass('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('id', this.getId());
+        e.dataTransfer.setData('text/html', this.element.outerHTML);
+        e.dataTransfer.setDragImage(this.element, 0, 0);
+    }
+
+    handleDragOver(e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        if (!this.hasClass('dragging')) {
+            this.setClass('drag-over');
+        }
+    }
+
+    handleDragLeave(e) {
+        if (!this.element.contains(e.relatedTarget)) {
+            this.unsetClass('drag-over');
+        }
+    }
+
+    handleDrop(e) {
+        e.preventDefault();
+        const dragged = this.constructor.of(e.dataTransfer.getData('id'))
+        if (dragged !== this) {
+            this.onDrop(e, dragged).then();
+            this.unsetClass('drag-over');
+        }
+    }
+
+    async onDrop(e, dragged) {
+        throw new Error('Not implemented');
+    }
+
+    handleDragEnd(e) {
+        this.unsetClass('dragging');
+        document.querySelectorAll('.drag-over').forEach(item => {
+            item.classList.remove('drag-over');
+        });
+    }
+}
+
 export function htmlToElement(html) {
     const template = document.createElement('template');
     template.innerHTML = html.trim();
