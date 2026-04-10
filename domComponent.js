@@ -10,7 +10,7 @@ export class DomComponent {
         const element = this.createElement(...args);
         const dom = new this(element);
         if (!element.id) {
-            element.id = this.constructor.className + dom.generateId(...args);
+            element.id = this.className + dom.generateId(...args);
         }
         dom.init(...args);
         dom.registerEventListeners(...args);
