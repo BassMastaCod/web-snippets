@@ -9,7 +9,7 @@ export class DomComponent {
     static create(...args) {
         const element = this.createElement(...args);
         if (!element.classList.contains(this.className)) {
-            element.classList.add(this.className)
+            element.classList.add(this.className);
         }
         const dom = new this(element);
         if (!element.id) {
@@ -121,7 +121,7 @@ export class DomComponent {
     }
 }
 
-export class DraggableDomComponent extends DomComponent {
+export const Draggable = Base => class extends Base {
     static create(...args) {
         const dom = super.create(...args);
         dom.element.draggable = true;
@@ -161,14 +161,14 @@ export class DraggableDomComponent extends DomComponent {
 
     handleDrop(e) {
         e.preventDefault();
-        const dragged = this.constructor.of(e.dataTransfer.getData('id'))
+        const dragged = this.constructor.of(e.dataTransfer.getData('id'));
         if (dragged !== this) {
-            this.onDrop(e, dragged).then();
+            this.onDrop(e, dragged);
             this.unsetClass('drag-over');
         }
     }
 
-    async onDrop(e, dragged) {
+    onDrop(e, dragged) {
         throw new Error('Not implemented');
     }
 
@@ -178,7 +178,7 @@ export class DraggableDomComponent extends DomComponent {
             item.classList.remove('drag-over');
         });
     }
-}
+};
 
 export function htmlToElement(html) {
     const template = document.createElement('template');
