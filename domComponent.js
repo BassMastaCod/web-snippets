@@ -70,6 +70,24 @@ export class DomComponent {
     }
 
     /**
+     * Gets a nested element or throws an Error.
+     */
+    getElement(selector) {
+        found = this.element.querySelector(selector);
+        if (!found) {
+            throw new Error(`Element ${selector} not found in ${this.constructor.className} ${this.getId()}`);
+        }
+        return found
+    }
+
+    /**
+     * Find nested elements (if any) that match a selector.
+     */
+    getElements(selector) {
+        return this.element.querySelectorAll(selector);
+    }
+
+    /**
      * Set a dataset attribute.
      */
     setData(key, value) {
