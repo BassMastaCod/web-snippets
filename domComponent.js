@@ -179,9 +179,9 @@ export const Draggable = Base => class extends Base {
 
     handleDrop(e) {
         e.preventDefault();
-        const dragged = this.constructor.of(e.dataTransfer.getData('id'));
-        if (dragged !== this) {
-            this.onDrop(e, dragged);
+        const droppedOn = e.dataTransfer.getData('id')
+        if (droppedOn !== this.getId()) {
+            this.onDrop(e, this.constructor.of(droppedOn));
             this.unsetClass('drag-over');
         }
     }
