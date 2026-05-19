@@ -128,7 +128,7 @@ export class DomComponent {
      * This will be a random UUID unless overridden with something more meaningful.
      */
     generateId(...args) {
-        return crypto.randomUUID();
+        return Math.random().toString(36).slice(2);
     }
 
     /**
