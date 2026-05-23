@@ -13,7 +13,7 @@ export class DomComponent {
         }
         const dom = new this(element);
         if (!element.id) {
-            element.id = this.className + dom.generateId(...args);
+            element.id = `${this.className}-${dom.generateId(...args)}`;
         }
         dom.init(...args);
         dom.registerEventListeners(...args);
@@ -33,7 +33,7 @@ export class DomComponent {
     }
 
     static of(id) {
-        return this.newOrNull(document.getElementById(`${this.className}${id}`));
+        return this.newOrNull(document.getElementById(`${this.className}-${id}`));
     }
 
     static ofEvent(event) {
