@@ -11,8 +11,9 @@ export class FastControllerApi extends SessionClient {
      * @param {string} xOrderBy - Field to order by (prefix with ! for descending)
      * @param {number} xPerPage - Number of items per page
      * @param {number} xPage - Page number (1 for first page)
+     * @param {Function} onSuccess - Callback executed on successfully receiving a response
      */
-    async find(criteria = {}, xOrderBy, xPerPage, xPage) {
+    async find(criteria = {}, xOrderBy, xPerPage, xPage, onSuccess) {
         const searchParams = new URLSearchParams();
         for (const [key, value] of Object.entries(criteria)) {
             if (value !== undefined && value !== null) {
@@ -37,7 +38,7 @@ export class FastControllerApi extends SessionClient {
             queryStart = this.baseUrl.includes('?') ? '&' : '?';
         }
 
-        return this.get(queryStart + query, headers);
+        return this.request('GET', queryStart + query, null, headers, onSuccess);
     }
 
     /**
