@@ -21,16 +21,16 @@ export class ApiClient {
 
     /**
      * Normalize boolean strings in the payload
-     * Converts "true"/"false" strings to actual booleans
+     * Converts 'true'/'false' strings to actual booleans
      * @param {Object} data - The request body data
      * @returns {Object} - The normalized data
      */
     normalizeBooleans(data) {
         const result = {};
         for (const [key, value] of Object.entries(data)) {
-            if (value === "true") {
+            if (value === 'true') {
                 result[key] = true;
-            } else if (value === "false") {
+            } else if (value === 'false') {
                 result[key] = false;
             } else {
                 result[key] = value;
@@ -44,19 +44,22 @@ export class ApiClient {
      * @param {string} method - The HTTP method (GET, POST, PUT, DELETE, etc.)
      * @param {string} endpoint - The API endpoint (will be appended to baseUrl)
      * @param {Object} data - The request body data (for POST, PUT, etc.)
+     * @param {Object} extraHeaders - Custom headers to include in the request
+     * @param {Object} extraOptions - Additional options for fetch
+     *
      * @returns {Promise<any>} - The response data
      */
-    async request(method, endpoint = '', data = null, extraOptions = {}) {
+    async request(method, endpoint = '', data = null, extraHeaders = {}, extraOptions = {}) {
         const url = this.baseUrl + endpoint;
-        const fetchOptions = { method, ...extraOptions };
+        const fetchOptions = { method, headers: extraHeaders, ...extraOptions };
         if (data) {
             if (data instanceof FormData) {
                 fetchOptions.body = data;
             } else if (typeof data === 'string') {
-                fetchOptions.headers = { 'Content-Type': 'text/plain' };
+                fetchOptions.headers['Content-Type'] = 'text/plain';
                 fetchOptions.body = data;
             } else {
-                fetchOptions.headers = { 'Content-Type': 'application/json' };
+                fetchOptions.headers['Content-Type'] = 'application/json';
                 fetchOptions.body = JSON.stringify(this.normalizeBooleans(data));
             }
         }
@@ -79,57 +82,63 @@ export class ApiClient {
      * Make a GET request
      * @param {string} endpoint - The API endpoint
      * @returns {Promise<any>} - The response data
+     * @param {Object} headers - Custom headers to include in the request
      */
-    async get(endpoint = '') {
-        return this.request('GET', endpoint);
+    async get(endpoint = '', headers = {}) {
+        return this.request('GET', endpoint, null, headers);
     }
 
     /**
      * Make a POST request
      * @param {string} endpoint - The API endpoint
      * @param {Object} data - The request body data
+     * @param {Object} headers - Custom headers to include in the request
      * @returns {Promise<any>} - The response data
      */
-    async post(endpoint = '', data = null) {
-        return this.request('POST', endpoint, data);
+    async post(endpoint = '', data = null, headers = {}) {
+        return this.request('POST', endpoint, data, headers);
     }
 
     /**
      * Make a PUT request
      * @param {string} endpoint - The API endpoint
      * @param {Object} data - The request body data
+     * @param {Object} headers - Custom headers to include in the request
      * @returns {Promise<any>} - The response data
      */
-    async put(endpoint = '', data) {
-        return this.request('PUT', endpoint, data);
+    async put(endpoint = '', data = null, headers = {}) {
+        return this.request('PUT', endpoint, data, headers);
     }
 
     /**
      * Make a PATCH request
      * @param {string} endpoint - The API endpoint
      * @param {Object} data - The request body data
+     * @param {Object} headers - Custom headers to include in the request
      * @returns {Promise<any>} - The response data
      */
-    async patch(endpoint = '', data) {
-        return this.request('PATCH', endpoint, data);
+    async patch(endpoint = '', data = null, headers = {}) {
+        return this.request('PATCH', endpoint, data, headers);
     }
 
     /**
      * Make a DELETE request
      * @param {string} endpoint - The API endpoint
+     * @param {Object} headers - Custom headers to include in the request
      * @returns {Promise<any>} - The response data
      */
-    async delete(endpoint = '') {
-        return this.request('DELETE', endpoint);
+    async delete(endpoint = '', headers = {}) {
+        return this.request('DELETE', endpoint, null, headers);
     }
 
     /**
      * Make a HEAD request
      * @param {string} endpoint - The API endpoint
+     * @param {Object} headers - Custom headers to include in the request
      * @returns {Promise<any>} - The response data
      */
-    async head(endpoint = '') {
-        return this.request('HEAD', endpoint);
+    async head(endpoint = '', headers = {}) {
+        return this.request('HEAD', endpoint, null, headers);
     }
 }
 
@@ -137,9 +146,10 @@ export class ApiClient {
  * An API client that automatically authenticates each request using an HTTP Only Cookie.
  */
 export class SessionClient extends ApiClient {
-    async request(method, endpoint = '', data = null) {
-        return super.request(method, endpoint, data, {
-            credentials: 'include'
+    async request(method, endpoint = '', data = null, extraHeaders = {}, extraOptions = {}) {
+        return super.request(method, endpoint, data, extraHeaders, {
+            credentials: 'include',
+            ...extraOptions
         });
     }
 }
