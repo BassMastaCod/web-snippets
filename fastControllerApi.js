@@ -7,11 +7,11 @@ import {SessionClient} from 'https://bassmastacod.github.io/web-snippets/apiClie
 export class FastControllerApi extends SessionClient {
     /**
      * Find records with optional criteria, ordering, and pagination
-     * @param {Object} criteria - Search criteria as key-value pairs
-     * @param {string} xOrderBy - Field to order by (prefix with ! for descending)
-     * @param {number} xPerPage - Number of items per page
-     * @param {number} xPage - Page number (1 for first page)
-     * @param {Function} onSuccess - Callback executed on successfully receiving a response
+     * @param {Object} [criteria] - Search criteria as key-value pairs
+     * @param {string} [xOrderBy] - Field to order by (prefix with ! for descending)
+     * @param {number} [xPerPage] - Number of items per page
+     * @param {number} [xPage] - Page number (1 for first page)
+     * @param {Function} [onSuccess] - Callback executed on successfully receiving a response
      */
     async find(criteria = {}, xOrderBy, xPerPage, xPage, onSuccess) {
         const searchParams = new URLSearchParams();
@@ -43,7 +43,7 @@ export class FastControllerApi extends SessionClient {
 
     /**
      * Create a new record
-     * @param {Object} data - Data to create
+     * @param {Object} [data] - Data to create
      */
     async create(data) {
         return this.post('', data);
@@ -119,21 +119,21 @@ export class FastControllerApi extends SessionClient {
     /**
      * Get a specific page of records
      * @param {number} pageNumber - Page number (1 for first page)
-     * @param {Object} criteria - Search criteria as key-value pairs
-     * @param {number} perPage - Number of items per page
-     * @param {string} orderBy - Field to order by (prefix with ! for descending)
+     * @param {Object} [criteria] - Search criteria as key-value pairs
+     * @param {number} [perPage] - Number of items per page
+     * @param {string} [orderBy] - Field to order by (prefix with ! for descending)
      */
-    async getPage(pageNumber, criteria = {}, perPage = 20, orderBy) {
+    async getPage(pageNumber, criteria, perPage = 20, orderBy) {
         return this.find(criteria, orderBy, perPage, pageNumber);
     }
 
     /**
      * Get a single item (first result) from the query
-     * @param {Object} criteria - Search criteria as key-value pairs
-     * @param {string} orderBy - Field to order by (prefix with ! for descending)
-     * @param {number} pageNumber - Page number (1 for first page)
+     * @param {Object} [criteria] - Search criteria as key-value pairs
+     * @param {string} [orderBy] - Field to order by (prefix with ! for descending)
+     * @param {number} [pageNumber] - Page number (1 for first page)
      */
-    async getSingle(criteria = {}, orderBy, pageNumber) {
+    async getSingle(criteria, orderBy, pageNumber) {
         const results = await this.find(criteria, orderBy, 1, pageNumber);
         return Array.isArray(results) && results.length > 0 ? results[0] : null;
     }
@@ -142,9 +142,9 @@ export class FastControllerApi extends SessionClient {
      * Find records with a limited number of results
      * @param {Object} criteria - Search criteria as key-value pairs
      * @param {number} limit - Limit on the number of results per page
-     * @param {string} orderBy - Field to order by (prefix with ! for descending)
+     * @param {string} [orderBy] - Field to order by (prefix with ! for descending)
      */
-    async limitFind(criteria = {}, limit, orderBy) {
+    async limitFind(criteria, limit, orderBy) {
         return this.find(criteria, orderBy, limit);
     }
 }

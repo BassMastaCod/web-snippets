@@ -43,10 +43,10 @@ export class ApiClient {
      * Make an API request with standardized error handling
      * @param {string} method - The HTTP method (GET, POST, PUT, DELETE, etc.)
      * @param {string} endpoint - The API endpoint (will be appended to baseUrl)
-     * @param {Object} data - The request body data (for POST, PUT, etc.)
+     * @param {?Object} data - The request body data (for POST, PUT, etc.)
      * @param {Object} extraHeaders - Custom headers to include in the request
      * @param {Object} extraOptions - Additional options for fetch
-     * @param {function} onSuccess - Callback function to call with the successful response
+     * @param {?function} onSuccess - Callback function to call with the successful response
      *
      * @returns {Promise<any>} - The response data
      */
@@ -68,8 +68,9 @@ export class ApiClient {
         const response = await fetch(url, fetchOptions);
         if (!response.ok) {
             throw new RequestError(`${response.status} - ${await response.text()}`);
-        } else if (onSuccess) {
-            onSuccess(response);
+        }
+        if (onSuccess) {
+            await onSuccess(response);
         }
 
         if (response.status === 204) {
@@ -83,64 +84,64 @@ export class ApiClient {
 
     /**
      * Make a GET request
-     * @param {string} endpoint - The API endpoint
+     * @param {string} [endpoint] - The API endpoint
+     * @param {Object} [headers] - Custom headers to include in the request
      * @returns {Promise<any>} - The response data
-     * @param {Object} headers - Custom headers to include in the request
      */
-    async get(endpoint = '', headers = {}) {
+    async get(endpoint, headers) {
         return this.request('GET', endpoint, null, headers);
     }
 
     /**
      * Make a POST request
-     * @param {string} endpoint - The API endpoint
-     * @param {Object} data - The request body data
-     * @param {Object} headers - Custom headers to include in the request
+     * @param {string} [endpoint] - The API endpoint
+     * @param {Object} [data] - The request body data
+     * @param {Object} [headers] - Custom headers to include in the request
      * @returns {Promise<any>} - The response data
      */
-    async post(endpoint = '', data = null, headers = {}) {
+    async post(endpoint, data, headers) {
         return this.request('POST', endpoint, data, headers);
     }
 
     /**
      * Make a PUT request
-     * @param {string} endpoint - The API endpoint
-     * @param {Object} data - The request body data
-     * @param {Object} headers - Custom headers to include in the request
+     * @param {string} [endpoint] - The API endpoint
+     * @param {Object} [data] - The request body data
+     * @param {Object} [headers] - Custom headers to include in the request
      * @returns {Promise<any>} - The response data
      */
-    async put(endpoint = '', data = null, headers = {}) {
+    async put(endpoint, data, headers) {
         return this.request('PUT', endpoint, data, headers);
     }
 
     /**
      * Make a PATCH request
-     * @param {string} endpoint - The API endpoint
-     * @param {Object} data - The request body data
-     * @param {Object} headers - Custom headers to include in the request
+     * @param {string} [endpoint] - The API endpoint
+     * @param {Object} [data] - The request body data
+     * @param {Object} [headers] - Custom headers to include in the request
      * @returns {Promise<any>} - The response data
      */
-    async patch(endpoint = '', data = null, headers = {}) {
+    async patch(endpoint, data, headers) {
         return this.request('PATCH', endpoint, data, headers);
     }
 
     /**
      * Make a DELETE request
-     * @param {string} endpoint - The API endpoint
-     * @param {Object} headers - Custom headers to include in the request
+     * @param {string} [endpoint] - The API endpoint
+     * @param {Object} [headers] - Custom headers to include in the request
      * @returns {Promise<any>} - The response data
      */
-    async delete(endpoint = '', headers = {}) {
+    async delete(endpoint, headers) {
         return this.request('DELETE', endpoint, null, headers);
     }
 
     /**
      * Make a HEAD request
-     * @param {string} endpoint - The API endpoint
-     * @param {Object} headers - Custom headers to include in the request
+     * @param {string} [endpoint] - The API endpoint
+     * @param {Object} [headers] - Custom headers to include in the request
      * @returns {Promise<any>} - The response data
      */
-    async head(endpoint = '', headers = {}) {
+    async head(endpoint, headers) {
         return this.request('HEAD', endpoint, null, headers);
     }
 }
@@ -149,11 +150,11 @@ export class ApiClient {
  * An API client that automatically authenticates each request using an HTTP Only Cookie.
  */
 export class SessionClient extends ApiClient {
-    async request(method, endpoint = '', data = null, extraHeaders = {}, extraOptions = {}) {
+    async request(method, endpoint, data, extraHeaders, extraOptions, onSuccess) {
         return super.request(method, endpoint, data, extraHeaders, {
             credentials: 'include',
-            ...extraOptions
-        });
+            ...extraOptions,
+        }, onSuccess);
     }
 }
 
