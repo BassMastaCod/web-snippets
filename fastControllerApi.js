@@ -38,7 +38,7 @@ export class FastControllerApi extends SessionClient {
             queryStart = this.baseUrl.includes('?') ? '&' : '?';
         }
 
-        return this.request('GET', queryStart + query, null, headers, onSuccess);
+        return this.request('GET', queryStart + query, null, headers, {}, onSuccess);
     }
 
     /**
