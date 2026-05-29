@@ -46,10 +46,11 @@ export class ApiClient {
      * @param {Object} data - The request body data (for POST, PUT, etc.)
      * @param {Object} extraHeaders - Custom headers to include in the request
      * @param {Object} extraOptions - Additional options for fetch
+     * @param {function} onSuccess - Callback function to call with the successful response
      *
      * @returns {Promise<any>} - The response data
      */
-    async request(method, endpoint = '', data = null, extraHeaders = {}, extraOptions = {}) {
+    async request(method, endpoint = '', data = null, extraHeaders = {}, extraOptions = {}, onSuccess) {
         const url = this.baseUrl + endpoint;
         const fetchOptions = { method, headers: extraHeaders, ...extraOptions };
         if (data) {
@@ -67,6 +68,8 @@ export class ApiClient {
         const response = await fetch(url, fetchOptions);
         if (!response.ok) {
             throw new RequestError(`${response.status} - ${await response.text()}`);
+        } else if (onSuccess) {
+            onSuccess(response);
         }
 
         if (response.status === 204) {
