@@ -69,17 +69,17 @@ export class ApiClient {
         if (!response.ok) {
             throw new RequestError(`${response.status} - ${await response.text()}`);
         }
-        if (onSuccess) {
-            await onSuccess(response);
-        }
 
-        if (response.status === 204) {
+        if (onSuccess) {
+            return await onSuccess(response);
+        } else if (response.status === 204) {
             return null;
+        } else {
+            const type = response.headers.get('content-type') || '';
+            return type.includes('application/json')
+                ? await response.json()
+                : await response.text();
         }
-        const type = response.headers.get('content-type') || '';
-        return type.includes('application/json')
-            ? await response.json()
-            : await response.text();
     }
 
     /**
