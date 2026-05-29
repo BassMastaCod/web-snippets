@@ -123,16 +123,17 @@ export class FastControllerApi extends SessionClient {
      * @param {string} orderBy - Field to order by (prefix with ! for descending)
      */
     async getPage(pageNumber, criteria = {}, perPage = 20, orderBy) {
-        return this.find(criteria, baseQuery, orderBy, perPage, pageNumber);
+        return this.find(criteria, orderBy, perPage, pageNumber);
     }
 
     /**
      * Get a single item (first result) from the query
      * @param {Object} criteria - Search criteria as key-value pairs
      * @param {string} orderBy - Field to order by (prefix with ! for descending)
+     * @param {number} pageNumber - Page number (1 for first page)
      */
-    async getSingle(criteria = {}, orderBy) {
-        const results = await this.find(criteria, orderBy, 1);
+    async getSingle(criteria = {}, orderBy, pageNumber) {
+        const results = await this.find(criteria, orderBy, 1, pageNumber);
         return Array.isArray(results) && results.length > 0 ? results[0] : null;
     }
 
@@ -143,6 +144,6 @@ export class FastControllerApi extends SessionClient {
      * @param {string} orderBy - Field to order by (prefix with ! for descending)
      */
     async limitFind(criteria = {}, limit, orderBy) {
-        return this.find(criteria, baseQuery, orderBy, limit, 1);
+        return this.find(criteria, orderBy, limit);
     }
 }
