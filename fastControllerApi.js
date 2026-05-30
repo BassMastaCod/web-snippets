@@ -122,9 +122,16 @@ export class FastControllerApi extends SessionClient {
      * @param {Object} [criteria] - Search criteria as key-value pairs
      * @param {number} [perPage] - Number of items per page
      * @param {string} [orderBy] - Field to order by (prefix with ! for descending)
+     * @returns {Promise<{results: Array, totalCount: (string|null)}>} - A promise that resolves with an object containing:
+     *  - results: An array of records for the requested page.
+     *  - totalCount: The total number of records as a string, or null if not provided.
      */
     async getPage(pageNumber, criteria, perPage = 20, orderBy) {
-        return this.find(criteria, orderBy, perPage, pageNumber);
+        return this.find(criteria, orderBy, perPage, pageNumber, async response => {
+            const results = response.status === 204 ? [] : await response.json();
+            const totalCount = response.headers.get('x-total-count');
+            return {results, totalCount}
+        })
     }
 
     /**
@@ -143,8 +150,11 @@ export class FastControllerApi extends SessionClient {
      * @param {Object} criteria - Search criteria as key-value pairs
      * @param {number} limit - Limit on the number of results per page
      * @param {string} [orderBy] - Field to order by (prefix with ! for descending)
+     * @returns {Promise<{results: Array, totalCount: (string|null)}>} - A promise that resolves with an object containing:
+     *  - results: An array of records for the requested limit.
+     *  - totalCount: The total number of records as a string, or null if not provided.
      */
     async limitFind(criteria, limit, orderBy) {
-        return this.find(criteria, orderBy, limit);
+        return this.getPage(1, criteria, limit, orderBy);
     }
 }
