@@ -135,6 +135,17 @@ export class FastControllerApi extends SessionClient {
     }
 
     /**
+     * Get the total count of records matching the criteria
+     * @param {Object} [criteria] - Search criteria as key-value pairs
+     * @returns {Promise<string|null>} - A promise that resolves to the total count of records as a string, or null if not provided
+     */
+    async count(criteria) {
+        return this.find(criteria, null, 1, 1, async response => {
+            return response.headers.get('x-total-count')
+        })
+    }
+
+    /**
      * Get a single item (first result) from the query
      * @param {Object} [criteria] - Search criteria as key-value pairs
      * @param {string} [orderBy] - Field to order by (prefix with ! for descending)
