@@ -55,6 +55,7 @@ export class ApiClient {
         const fetchOptions = { method, headers: extraHeaders, ...extraOptions };
         if (data) {
             if (data instanceof FormData) {
+                fetchOptions.headers['Content-Type'] = 'application/x-www-form-urlencoded';
                 fetchOptions.body = data;
             } else if (typeof data === 'string') {
                 fetchOptions.headers['Content-Type'] = 'text/plain';
